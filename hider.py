@@ -2,6 +2,9 @@
 
 import rospy
 import actionlib
+import time
+import sys
+import thread
 from actionlib_msgs.msg import *
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from geometry_msgs.msg import Twist
@@ -114,14 +117,28 @@ def chooseHidingSpot():
         hidingSpots = hidingMap[2]
     elif(len(hidingMap[1]) > 0):
         hidingSpots = hidingMap[1]
-    else
+    #else    
         # choose some random bs spot i guess? this should pretty much never happen
 
     index = randint(0, len(hidingSpots)-1)
     chosenHidingSpot = hidingSpots[index]
 
-def main():
+def waitForHideTime(hide_time):
+    global exploration_client
+    for i in range(0, hide_time):
+        print 'hiding'
+        time.sleep(1)
+    print 'time\'s up! got to hide...' 
+    exploration_client.cancel_all_goals()
+    print 'cancelled all goals'    
+
+def main(args):
     global goal_client, exploration_client, rate, status
+    
+    hide_time = 60 # default hide time 60 seconds
+    if (len(args) > 0):
+        hide_time = int(args[0])
+    print 'set hide time to ' ,hide_time
     rospy.init_node('homework5_navigator')
     rate = rospy.Rate(10)
 
@@ -155,12 +172,16 @@ def main():
     # see chooseHidingSpot
 
     # MAIN LOOP
+    try:
+        thread.start_new_thread(waitForHideTime, (hide_time))
+    except:
+        print 'Error: couldn\'t create thread'
     print "exploration!"
     startExploration()
-
+    
 
 if __name__ == "__main__":
     try:
-        main()
+        main(sys.argv[1:])
     except rospy.ROSInterruptException:
         pass
