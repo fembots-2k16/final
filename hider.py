@@ -5,6 +5,7 @@ import actionlib
 import time
 import sys
 import threading
+import math
 from actionlib_msgs.msg import *
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from geometry_msgs.msg import Twist
@@ -31,7 +32,7 @@ robot_pose = None
 initial_pose = None
 
 hidingDistance = 0.5
-hidingMap = {1:[], 2:[], 3:[]}
+hidingMap = {1:None, 2:None, 3:None}
 chosenHidingSpot = None
 
 def moveBaseActionResultHandler(data):
@@ -49,6 +50,18 @@ def exploreTaskActionResultHandler(data):
 def initialPoseHandler(data):
     global initial_pose
     initial_pose = data.pose.pose
+
+# calculate the distance between the initial pose and the current pose
+# uses x and y values and the distance formula
+def getDistance(current_pose):
+    global initial_pose
+    init_x = initial_pose.position.x
+    init_y = initial_pose.position.y
+    current_x = current_pose.position.x
+    current_y = current_pose.position.y
+    diff1 = math.pow(current_x - init_x, 2)
+    diff2 = math.pow(current_y - init_y, 2)
+    return math.sqrt(diff1 + diff2) # return the distance
 
 def odometryHandler(data):
     global odom_pose, robot_pose, initial_pose
@@ -74,7 +87,7 @@ def scanHandler(data):
     middle = ranges[int(len(ranges)/2)]
     right = ranges[0]
     levelOfHiding = 0
-
+    
     if left < hidingDistance:
         levelOfHiding += 1
     if middle < hidingDistance:
@@ -84,7 +97,8 @@ def scanHandler(data):
 
     if levelOfHiding > 0:
         global robot_pose, hidingMap
-        hidingMap[levelOfHiding].append(robot_pose)
+        print "distance ", getDistance(robot_pose)
+        hidingMap[levelOfHiding] = robot_pose
         chosenHidingSpot = robot_pose    
 
 
@@ -113,17 +127,17 @@ def startExploration():
 def chooseHidingSpot():
     global hidingMap, chosenHidingSpot
     hidingSpots = []
-    if(len(hidingMap[3]) > 0): # 3 walls
-        hidingSpots = hidingMap[3]
-    elif(len(hidingMap[2]) > 0): # 2 walls
-        hidingSpots = hidingMap[2] 
-    elif(len(hidingMap[1]) > 0): # 1 wall
-        hidingSpots = hidingMap[1] 
+    if(hidingMap[3] != None): # 3 walls
+        chosenHidingSpot = hidingMap[3]
+    elif(hidingMap[2] != None): # 2 walls
+        chosenHidingSpot = hidingMap[2] 
+    elif(hidingMap[1] != None): # 1 wall
+        chosenHidingSpot = hidingMap[1] 
     #if no hiding spots are found, the chosenHidingSpot variable won't get set
     # in this case the robot will just stay in its last position
 
-    index = randint(0, len(hidingSpots)-1)
-    chosenHidingSpot = hidingSpots[index]
+    #index = randint(0, len(hidingSpots)-1)
+    #chosenHidingSpot = hidingSpots[index]
 
 def setHidingTargetPose():
     global chosenHidingSpot
