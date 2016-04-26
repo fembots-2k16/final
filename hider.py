@@ -4,7 +4,7 @@ import rospy
 import actionlib
 import time
 import sys
-import thread
+import threading
 from actionlib_msgs.msg import *
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from geometry_msgs.msg import Twist
@@ -68,6 +68,7 @@ def odometryHandler(data):
         robot_pose.orientation.w += initial_pose.orientation.w
 
 def scanHandler(data):
+    global chosenHidingSpot
     ranges = data.ranges
     left = ranges[len(ranges)-1]
     middle = ranges[int(len(ranges)/2)]
@@ -84,6 +85,7 @@ def scanHandler(data):
     if levelOfHiding > 0:
         global robot_pose, hidingMap
         hidingMap[levelOfHiding].append(robot_pose)
+        chosenHidingSpot = robot_pose    
 
 
 def startExploration():
@@ -123,14 +125,36 @@ def chooseHidingSpot():
     index = randint(0, len(hidingSpots)-1)
     chosenHidingSpot = hidingSpots[index]
 
+def setHidingTargetPose():
+    global chosenHidingSpot
+    client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+    client.wait_for_server()
+    
+    goal = MoveBaseGoal()
+    goal.target_pose.header.frame_id = "map"
+    goal.target_pose.header.stamp = rospy.get_rostime()
+    
+    if (chosenHidingSpot != None):
+        goal.target_pose.pose.position.x = chosenHidingSpot.position.x
+        goal.target_pose.pose.position.y =  chosenHidingSpot.position.y
+        goal.target_pose.pose.orientation.w = 1.0
+            
+        print "sending hiding goal! you'll never catch me now..."
+        client.send_goal(goal)
+
+        print "Result:", client.get_result()
+    
+
 def waitForHideTime(hide_time):
     global exploration_client
     for i in range(0, hide_time):
-        print 'hiding'
+        if (i%10 == 0): #print sometimes just so we know the loop is working
+            print 'hiding'
         time.sleep(1)
     print 'time\'s up! got to hide...' 
     exploration_client.cancel_all_goals()
-    print 'cancelled all goals'    
+    print 'going to hide'    
+    setHidingTargetPose()
 
 def main(args):
     global goal_client, exploration_client, rate, status
@@ -173,7 +197,8 @@ def main(args):
 
     # MAIN LOOP
     try:
-        thread.start_new_thread(waitForHideTime, (hide_time))
+        t = threading.Thread(target = waitForHideTime,args=(hide_time,))
+        t.start()
     except:
         print 'Error: couldn\'t create thread'
     print "exploration!"
