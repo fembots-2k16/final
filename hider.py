@@ -113,14 +113,14 @@ def startExploration():
 def chooseHidingSpot():
     global hidingMap, chosenHidingSpot
     hidingSpots = []
-    if(len(hidingMap[3]) > 0):
+    if(len(hidingMap[3]) > 0): # 3 walls
         hidingSpots = hidingMap[3]
-    elif(len(hidingMap[2]) > 0):
-        hidingSpots = hidingMap[2]
-    elif(len(hidingMap[1]) > 0):
-        hidingSpots = hidingMap[1]
-    #else    
-        # choose some random bs spot i guess? this should pretty much never happen
+    elif(len(hidingMap[2]) > 0): # 2 walls
+        hidingSpots = hidingMap[2] 
+    elif(len(hidingMap[1]) > 0): # 1 wall
+        hidingSpots = hidingMap[1] 
+    #if no hiding spots are found, the chosenHidingSpot variable won't get set
+    # in this case the robot will just stay in its last position
 
     index = randint(0, len(hidingSpots)-1)
     chosenHidingSpot = hidingSpots[index]
@@ -153,7 +153,8 @@ def waitForHideTime(hide_time):
         time.sleep(1)
     print 'time\'s up! got to hide...' 
     exploration_client.cancel_all_goals()
-    print 'going to hide'    
+    print 'going to hide'  
+    chooseHidingSpot()  
     setHidingTargetPose()
 
 def main(args):
