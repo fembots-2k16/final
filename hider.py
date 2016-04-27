@@ -30,6 +30,7 @@ interrupt_exploration = False
 odom_pose = None
 robot_pose = None
 initial_pose = None
+farthest_position = [None, None]
 
 hidingDistance = 0.5
 hidingMap = {1:None, 2:None, 3:None}
@@ -83,30 +84,38 @@ def odometryHandler(data):
 # checks the laser scan values and updates the values in the dictionary
 # containing potential hidings spots
 def scanHandler(data):
-    global chosenHidingSpot
+    global chosenHidingSpot, farthest_position
     ranges = data.ranges
     left = ranges[len(ranges)-1]
     middle = ranges[int(len(ranges)/2)]
     right = ranges[0]
     levelOfHiding = 0
-    
+    distance = getDistance(robot_pose)
+
+    if distance > farthest_position[1]:
+        farthest_position = [robot_pose, distance]
+
+    #left wall!
     if left < hidingDistance:
         levelOfHiding += 1
+    #wall in front of!
     if middle < hidingDistance:
         levelOfHiding += 1
+    #right wall!
     if right < hidingDistance:
         levelOfHiding += 1
 
     if levelOfHiding > 0:
         global robot_pose, hidingMap
-        print "distance ", getDistance(robot_pose)
-        if (hidingMap[levelOfHiding] != None): # if a spot was previously saved
+        print "distance ", distance
+        if hidingMap[levelOfHiding] != None: # if a spot was previously saved
             # check if the current spot is farther from the previously saved spot
             if (distance > hidingMap[levelOfHiding][1]):
                 hidingMap[levelOfHiding] = [robot_pose, distance]
+                chosenHidingSpot = [robot_pose, distance]
         else:
             hidingMap[levelOfHiding] = [robot_pose, distance]
-        chosenHidingSpot = robot_pose    
+            chosenHidingSpot = [robot_pose, distance]
 
 
 def startExploration():
@@ -132,16 +141,25 @@ def startExploration():
     print "exploration goal 'complete'"
 
 def chooseHidingSpot():
-    global hidingMap, chosenHidingSpot
+    global hidingMap, chosenHidingSpot, farthest_position
     hidingSpots = []
-    if(hidingMap[3] != None): # 3 walls
+    how_many_walls = 0
+    if hidingMap[3] != None: # 3 walls
         chosenHidingSpot = hidingMap[3]
-    elif(hidingMap[2] != None): # 2 walls
-        chosenHidingSpot = hidingMap[2] 
-    elif(hidingMap[1] != None): # 1 wall
-        chosenHidingSpot = hidingMap[1] 
-    #if no hiding spots are found, the chosenHidingSpot variable won't get set
+        how_many_walls = 3
+    elif hidingMap[2] != None: # 2 walls
+        chosenHidingSpot = hidingMap[2]
+        how_many_walls = 2
+    elif hidingMap[1] != None: # 1 wall
+        chosenHidingSpot = hidingMap[1]
+        how_many_walls = 1
+    # if no hiding spots are found, the chosenHidingSpot variable won't get set
     # in this case the robot will just stay in its last position
+
+    if how_many_walls == 1 and chosenHidingSpot[1] < distance:
+        chosenHidingSpot = farthest_position
+    elif how_many_walls == 0:
+        chosenHidingSpot = farthest_position
 
     #index = randint(0, len(hidingSpots)-1)
     #chosenHidingSpot = hidingSpots[index]
@@ -150,21 +168,21 @@ def setHidingTargetPose():
     global chosenHidingSpot
     client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
     client.wait_for_server()
-    
+
     goal = MoveBaseGoal()
     goal.target_pose.header.frame_id = "map"
     goal.target_pose.header.stamp = rospy.get_rostime()
-    
-    if (chosenHidingSpot != None):
-        goal.target_pose.pose.position.x = chosenHidingSpot.position.x
-        goal.target_pose.pose.position.y =  chosenHidingSpot.position.y
+
+    if (chosenHidingSpot != None and chosenHidingSpot[0] != None):
+        goal.target_pose.pose.position.x = chosenHidingSpot[0].position.x
+        goal.target_pose.pose.position.y =  chosenHidingSpot[0].position.y
         goal.target_pose.pose.orientation.w = 1.0
-            
+
         print "sending hiding goal! you'll never catch me now..."
         client.send_goal(goal)
 
         print "Result:", client.get_result()
-    
+
 
 def waitForHideTime(hide_time):
     global exploration_client
@@ -172,15 +190,15 @@ def waitForHideTime(hide_time):
         if (i%10 == 0): #print sometimes just so we know the loop is working
             print 'hiding'
         time.sleep(1)
-    print 'time\'s up! got to hide...' 
+    print 'time\'s up! got to hide...'
     exploration_client.cancel_all_goals()
-    print 'going to hide'  
-    chooseHidingSpot()  
+    print 'going to hide'
+    chooseHidingSpot()
     setHidingTargetPose()
 
 def main(args):
     global goal_client, exploration_client, rate, status
-    
+
     hide_time = 60 # default hide time 60 seconds
     if (len(args) > 0):
         hide_time = int(args[0])
@@ -212,11 +230,6 @@ def main(args):
     while initial_pose == None:
         rate.sleep()
 
-    #TODO
-    # after some fixed time kill exploration server
-    # choose a hiding spot and navigate there
-    # see chooseHidingSpot
-
     # MAIN LOOP
     try:
         t = threading.Thread(target = waitForHideTime,args=(hide_time,))
@@ -225,7 +238,7 @@ def main(args):
         print 'Error: couldn\'t create thread'
     print "exploration!"
     startExploration()
-    
+
 
 if __name__ == "__main__":
     try:
