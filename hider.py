@@ -99,7 +99,8 @@ def scanHandler(data):
 
     if levelOfHiding > 0:
         global robot_pose, hidingMap
-        print "distance ", getDistance(robot_pose)
+        distance = getDistance(robot_pose)
+        print "distance ", distance
         if (hidingMap[levelOfHiding] != None): # if a spot was previously saved
             # check if the current spot is farther from the previously saved spot
             if (distance > hidingMap[levelOfHiding][1]):
