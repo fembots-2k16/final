@@ -80,6 +80,8 @@ def odometryHandler(data):
         robot_pose.orientation.z += initial_pose.orientation.z
         robot_pose.orientation.w += initial_pose.orientation.w
 
+# checks the laser scan values and updates the values in the dictionary
+# containing potential hidings spots
 def scanHandler(data):
     global chosenHidingSpot
     ranges = data.ranges
@@ -98,7 +100,12 @@ def scanHandler(data):
     if levelOfHiding > 0:
         global robot_pose, hidingMap
         print "distance ", getDistance(robot_pose)
-        hidingMap[levelOfHiding] = robot_pose
+        if (hidingMap[levelOfHiding] != None): # if a spot was previously saved
+            # check if the current spot is farther from the previously saved spot
+            if (distance > hidingMap[levelOfHiding][1]):
+                hidingMap[levelOfHiding] = [robot_pose, distance]
+        else:
+            hidingMap[levelOfHiding] = [robot_pose, distance]
         chosenHidingSpot = robot_pose    
 
 
