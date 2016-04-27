@@ -85,6 +85,8 @@ def odometryHandler(data):
 # containing potential hidings spots
 def scanHandler(data):
     global chosenHidingSpot, farthest_position
+    if initial_pose == None: return
+
     ranges = data.ranges
     left = ranges[len(ranges)-1]
     middle = ranges[int(len(ranges)/2)]
@@ -156,7 +158,7 @@ def chooseHidingSpot():
     # if no hiding spots are found, the chosenHidingSpot variable won't get set
     # in this case the robot will just stay in its last position
 
-    if how_many_walls == 1 and chosenHidingSpot[1] < distance:
+    if how_many_walls == 1 and chosenHidingSpot[1] < farthest_position[1]:
         chosenHidingSpot = farthest_position
     elif how_many_walls == 0:
         chosenHidingSpot = farthest_position
@@ -200,6 +202,7 @@ def main(args):
     global goal_client, exploration_client, rate, status
 
     hide_time = 60 # default hide time 60 seconds
+    hide_time = 120
     if (len(args) > 0):
         hide_time = int(args[0])
     print 'set hide time to ' ,hide_time
