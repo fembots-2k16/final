@@ -15,12 +15,14 @@
 
 1. run the gazebo setup
     $ cd ~/catkin_ws/src/fembots
+    $ ./run_simulation
 
 --------------------------------------------------------------------------------
 
 # real-life run
 
 --------------------------------------------------------------------------------
+
 # paper
 https://docs.google.com/a/crimson.ua.edu/document/d/1Fq3d9fZN-58wJUKkR7wnKpp-wr10OOZoWVD2SqoR1-E/edit?usp=sharing_eid&ts=571fdd31
 
