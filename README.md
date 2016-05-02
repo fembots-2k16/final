@@ -1,12 +1,19 @@
 # simulation setup
 
 1. Install pioneer gazebo and stuff
+
     http://web.engr.oregonstate.edu/~chungje/Code/Pioneer3dx%20simulation/ros-indigo-gazebo2-pioneer.pdf
+
 2. Install fembots-final
+
     $ cd ~/catkin_ws/src
+
     $ git clone https://github.com/fembots-2k16/final
+
     $ cd ~/catkin_ws
+
     $ catkin_make
+
     $ source ~/catkin_ws/devel/setup.bash
 
 --------------------------------------------------------------------------------
@@ -14,7 +21,9 @@
 # simulation run
 
 1. run the gazebo setup
+
     $ cd ~/catkin_ws/src/fembots
+
     $ ./run_simulation
 
 --------------------------------------------------------------------------------
