@@ -1,0 +1,20 @@
+<launch>
+	<master auto="start"/>
+
+    <!-- Run the map server -->
+    <!-- running the simulation hospital map?? -->
+    <!-- can this be automated in the run_simulation script? yes. -->
+    <node pkg="map_server" type="map_server" name="map_server" args="$(find fembots)/maps/hospital.yaml" />
+
+    <!-- <include file="$(find fembots)/launch/pioneer.launch"></include> -->
+
+    <include file="$(find fembots)/launch/navigation_simulation.launch"></include>
+
+    <include file="$(find fembots)/launch/exploration.launch"></include>
+
+    <!--
+    <include file="$(find fembots)/launch/usb_cam-test.launch"></include>
+
+    <include file="$(find fembots)/launch/apriltags.launch"></include>
+    -->
+</launch>

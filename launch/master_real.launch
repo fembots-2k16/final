@@ -1,0 +1,13 @@
+<launch>
+	<master auto="start"/>
+
+    <include file="$(find fembots)/launch/pioneer.launch"></include>
+
+    <include file="$(find fembots)/launch/navigation.launch"></include>
+
+    <include file="$(find fembots)/launch/exploration.launch"></include>
+
+    <include file="$(find fembots)/launch/usb_cam-test.launch"></include>
+
+    <include file="$(find fembots)/launch/apriltags.launch"></include>
+</launch>
