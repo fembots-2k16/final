@@ -1,14 +1,16 @@
 # simulation setup
 
-1. Install pioneer gazebo and stuff
+<!-- 1. Install pioneer gazebo and stuff
 
-    http://web.engr.oregonstate.edu/~chungje/Code/Pioneer3dx%20simulation/ros-indigo-gazebo2-pioneer.pdf
+    http://web.engr.oregonstate.edu/~chungje/Code/Pioneer3dx%20simulation/ros-indigo-gazebo2-pioneer.pdf -->
 
 2. Install fembots-final
 
     $ cd ~/catkin_ws/src
 
     $ git clone https://github.com/fembots-2k16/final
+    
+    $ sudo mv -r final fembots
 
     $ cd ~/catkin_ws
 
@@ -20,11 +22,17 @@
 
 # simulation run
 
-1. run the gazebo setup
+1. run the stage simulation
 
     $ cd ~/catkin_ws/src/fembots
 
     $ ./run_simulation
+    
+2. run the hider or finder nodes??
+    
+    $ rosrun fembots hider.py 
+    
+    $ rosrun fembots finder.py
 
 --------------------------------------------------------------------------------
 
