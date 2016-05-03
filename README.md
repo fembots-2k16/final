@@ -1,7 +1,7 @@
 # to do
-- [ ] fix transform for fake amcl
-- [ ] write transform for apriltag for homework5 explanation
-- [ ] solve restarting exploration (by dummying an interrupt on simulation)
+- [x] fix transform for fake amcl
+- [x] write transform for apriltag for homework5 explanation
+- [x] solve restarting exploration (by dummying an interrupt on simulation)
 - [ ] dummy out a finder that works with another robot
 - [ ] related work (read and summarize academically)
 - [ ] results from first iteration (get data? time to find?? distance/efficiency of hiding??)
@@ -40,9 +40,9 @@
 
 2. run the hider or finder nodes??
 
-    $ rosrun fembots hider.py
+    $ rosrun fembots hider_sim.py
 
-    $ rosrun fembots finder.py
+    $ rosrun fembots finder_sim.py
 
 --------------------------------------------------------------------------------
 

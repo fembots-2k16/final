@@ -34,6 +34,18 @@ hidingDistance = 0.5
 hidingMap = {1:None, 2:None, 3:None}
 chosenHidingSpot = None
 
+def moveBaseActionResultHandler(data):
+    global goal_status
+    goal_status = data.status.status
+    #print "status: ", status
+    #print data.result
+    #http://docs.ros.org/fuerte/api/actionlib_msgs/html/msg/GoalStatus.html
+
+def exploreTaskActionResultHandler(data):
+    global explore_status
+    explore_status = data.status.status
+
+
 def initialPoseHandler(data):
     global initial_pose
     initial_pose = data.pose.pose
@@ -107,7 +119,7 @@ def scanHandler(data):
 
 
 def startExploration():
-    global exploration_client, rate, interrupt_exploration, seq_id
+    global goal_status, exploration_client, rate, interrupt_exploration, seq_id
     if interrupt_exploration:
         return
 
@@ -188,15 +200,14 @@ def main(args):
     global goal_client, exploration_client, rate
 
     hide_time = 60 # default hide time 60 seconds
-    hide_time = 120
     if (len(args) > 0):
         hide_time = int(args[0])
     print 'set hide time to ' ,hide_time
-    rospy.init_node('fembots_hider')
+    rospy.init_node('fembots_hider_sim')
     rate = rospy.Rate(10)
 
     rospy.Subscriber("/pose", Odometry, odometryHandler)
-    rospy.Subscriber("/initialpose", PoseWithCovarianceStamped, initialPoseHandler)
+    #rospy.Subscriber("/initialpose", PoseWithCovarianceStamped, initialPoseHandler)
     rospy.Subscriber("/scan", LaserScan, scanHandler)
 
 
@@ -211,11 +222,13 @@ def main(args):
         motPub.publish(motor)
         rate.sleep()
 
-    print "\n--------------------------------------"
-    print "set the initial pose in rviz ya fool!!!"
-    print "--------------------------------------\n"
-    while initial_pose == None:
-        rate.sleep()
+    #print "\n--------------------------------------"
+    #print "set the initial pose in rviz ya fool!!!"
+    #print "--------------------------------------\n"
+    #dummy out an initial pose because in simulation, pose returns relative to map coordinates!
+    initial_pose = PoseWithCovarianceStamped().pose.pose
+    #while initial_pose == None:
+    #    rate.sleep()
 
     # MAIN LOOP
     try:

@@ -25,11 +25,11 @@ found_ids = {}
 odom_pose = None
 robot_pose = None
 initial_pose = None
-initial_time = None
+initial_time
 
 def tagDetectionsHandler(data):
     global found_ids, odom_pose, rate, interrupt_exploration
-    global exploration_client, initial_pose, initial_time
+    global exploration_client, initial_pose
 
     if initial_pose == None: return
     if exploration_client == None: return
@@ -49,58 +49,32 @@ def tagDetectionsHandler(data):
             print "interrupt exploration from april tags handler"
             exploration_client.cancel_all_goals()
 
-            #MATH for finding global point from april tag
-            #relative tag posiiton values
+            #MATH for finding global point from april tag (shout out to ryan)
+            #relative tag posiiton
             april_x = april_pose.position.x
             april_z = april_pose.position.z
-            #calculate the angle as the arctan of z offset / x offset
-            #so this angle is relative from viewer, with 90 deg being head on?
-            april_theta = math.atan(april_z / april_x)
 
-            #nothing fancy here, just getting current robot position
-            ori = robot_pose.orientation
-            robot_x = robot_pose.position.x
-            robot_y = robot_pose.position.y
-            robot_theta = tf.transformations.euler_from_quaternion((ori.x, ori.y, ori.z, ori.w))
+            angle = math.asin(april_x / april_z)
+            x_diff = april_z * math.cos(angle)
+            y_diff = april_z * math.sin(angle)
+            #global tag position
+            april_x = robot_pose.position.x + x_diff
+            april_y = robot_pose.position.y + y_diff
 
-            # if robot is  0 degrees, rel x position is april.z
-            #                        rel y position is april.x (negative)
-            # if robot is 90 degrees, rel x position is april x
-            #                        rel y position is april z
-            # if robot is 180 degees, rel x position is april z (negative)
-            #                        rel y position is april x
-            # if robot is 270 degees, rel x position is april x (negative)
-            #                        rel y position is april z (negative)
-            # i figured this out by drawing a coordinate system picture and a truth table thing
-            x_offset = (math.cos(robot_theta)*april_z) + (math.sin(robot_theta)*april_x)
-            y_offset = (math.sin(robot_theta)*april_z) + (-math.cos(robot_theta)*april_x)
+            goal_x = april_x + 0.5*math.cos(-angle)
+            goal_y = april_y + 0.5*math.sin(-angle)
+            goal_z_theta = -angle
 
-            # additionally, put some buffer room (0.5 meters) in between robot and apriltag
-            x_buffer = (math.cos(robot_theta)*(-0.5))
-            y_buffer = (math.sin(robot_theta)*(-0.5))
-
-            #finalize the goal coordinates
-            goal_x = robot_x + x_offset + x_buffer
-            goal_y = robot_y + y_offset + y_buffer
-            goal_theta = robot_theta
-            goal_quaternion = tf.transformations.quaternion_from_euler(0, 0, goal_theta)
-
-            #create the goal!
             goal = MoveBaseGoal()
             goal.target_pose.header.frame_id = "map"
             goal.target_pose.header.stamp = rospy.get_rostime()
 
-            #set the goal values
             goal.target_pose.pose.position.x = goal_x
             goal.target_pose.pose.position.y = goal_y
-            goal.target_pose.pose.orientation.x = goal_quaternion.x
-            goal.target_pose.pose.orientation.y = goal_quaternion.y
-            goal.target_pose.pose.orientation.z = goal_quaternion.z
-            goal.target_pose.pose.orientation.w = goal_quaternion.w
+            goal.target_pose.pose.orientation.z = goal_z_theta
 
-            if goal_client == None:
-                goal_client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
-                goal_client.wait_for_server()
+            goal_client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+            goal_client.wait_for_server()
 
             goal_client.send_goal(goal)
             print "sending goal and waiting"
@@ -161,12 +135,12 @@ def startExploration():
 
 
 def main():
-    global goal_client, exploration_client, rate, initial_time
-    rospy.init_node('fembots_finder')
+    global goal_client, exploration_client, rate
+    rospy.init_node('fembots_finder_sim')
     rate = rospy.Rate(10)
 
     rospy.Subscriber("/pose", Odometry, odometryHandler)
-    rospy.Subscriber("/initialpose", PoseWithCovarianceStamped, initialPoseHandler)
+    #rospy.Subscriber("/initialpose", PoseWithCovarianceStamped, initialPoseHandler)
     rospy.Subscriber("/tag_detections", AprilTagDetectionArray, tagDetectionsHandler)
 
 
@@ -181,19 +155,19 @@ def main():
         motPub.publish(motor)
         rate.sleep()
 
-    print "\n--------------------------------------"
-    print "set the initial pose in rviz ya fool!!!"
-    print "--------------------------------------\n"
-    while initial_pose == None:
-        rate.sleep()
-
-    initial_time = int(round(time.time() * 1000))
+    #print "\n--------------------------------------"
+    #print "set the initial pose in rviz ya fool!!!"
+    #print "--------------------------------------\n"
+    #dummy out an initial pose because in simulation, pose returns relative to map coordinates!
+    initial_pose = PoseWithCovarianceStamped().pose.pose
+    #while initial_pose == None:
+    #    rate.sleep()
 
     #TODO
+    initial_time = int(round(time.time() * 1000))
     # MAIN LOOP
     print "exploration!"
     startExploration()
-    rospy.spin()
 
 
 if __name__ == "__main__":
