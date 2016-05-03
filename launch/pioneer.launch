@@ -12,7 +12,7 @@
 		<param name="angle_max" type="double" value="2.09" />
 		-->
 	</node>
-	
+
 	<include file="$(find p2os_urdf)/launch/pioneer3dx_urdf.launch"/>
 
 	<node pkg="tf" type="static_transform_publisher" name="base_laser_link" args="0 0 0.1397 0 0 0 base_link laser 100" />

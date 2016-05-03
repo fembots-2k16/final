@@ -34,34 +34,30 @@ floorplan
 )
 
 
-pioneer2dx
+pioneer2dx_base_no_sonar
 (
   # can refer to the robot by this name
   name "r0"
   pose [ 4.49 3.19 0 45.000 ]
 
-  # pioneer2dx's sonars	will be ranger:0 and the laser will be ranger:1
+  # the laser will be ranger:0 (base_scan)
   hokuyolaser( pose [ 0 0 0 0 ] )
-
-  # demonstrate a plugin controller, implemented in examples/ctrl/wander.cc
-  # you probably should comment this out when using simple.cfg with Player
-  ctrl "wander"
 
   # report error-free position in world coordinates
   localization "gps"
   localization_origin [ 0 0 0 0 ]
 
   # simplified Body shape:
-  #block(
-  #  points 8
-  #  point[0] [-0.2 0.12]
-  #  point[1] [-0.2 -0.12]
-  #  point[2] [-0.12 -0.2555]
-  #  point[3] [0.12 -0.2555]
-  #  point[4] [0.2 -0.12]
-  #  point[5] [0.2 0.12]
-  #  point[6] [0.12 0.2555]
-  #  point[7] [-0.12 0.2555]
-  #  z [0 0.22]
-  #)
+  block(
+    points 8
+    point[0] [-0.2 0.12]
+    point[1] [-0.2 -0.12]
+    point[2] [-0.12 -0.2555]
+    point[3] [0.12 -0.2555]
+    point[4] [0.2 -0.12]
+    point[5] [0.2 0.12]
+    point[6] [0.12 0.2555]
+    point[7] [-0.12 0.2555]
+    z [0 0.22]
+  )
 )

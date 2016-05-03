@@ -19,7 +19,7 @@
     $ cd ~/catkin_ws/src
 
     $ git clone https://github.com/fembots-2k16/final
-    
+
     $ sudo mv -r final fembots
 
     $ cd ~/catkin_ws
@@ -32,20 +32,16 @@
 
 # simulation run
 
-0. run roscore
-    
-    $ roscore
-
 1. run the stage simulation
 
     $ cd ~/catkin_ws/src/fembots
 
     $ ./run_simulation
-    
+
 2. run the hider or finder nodes??
-    
-    $ rosrun fembots hider.py 
-    
+
+    $ rosrun fembots hider.py
+
     $ rosrun fembots finder.py
 
 --------------------------------------------------------------------------------

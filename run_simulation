@@ -3,16 +3,33 @@
 my_pid=$$
 echo "My process ID is $my_pid"
 
+echo "Running roscore"
+roscore &
+pid=$!
+sleep 3s
+
 echo "Running Stage..."
-rosrun stage_ros stageros worlds/hospital.world base_scan_1:=scan odom:=pose &
-pid = $!
+rosrun stage_ros stageros worlds/hospital.world base_scan:=scan odom:=pose &
+pid="$pid $!"
+
 sleep 5s
 
-echo "Running fake_amcl.py"
-rosrun fembots fake_amcl.py
+echo "Running fake_amcl.py... >:)"
+rosrun fembots fake_amcl.py &
+pid="$pid $!"
+
+sleep 3s
+
+echo "Launching master_simulation.launch..."
+roslaunch fembots master_simulation.launch &
+pid="$pid $!"
+
+sleep 5s
+
+echo "Starting Rviz..."
+rviz &
 pid="$pid $!"
 
 trap "echo Killing all processes.; kill -2 TERM $pid; exit" SIGINT SIGTERM
 
 sleep 24h
-

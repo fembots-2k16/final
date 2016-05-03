@@ -2,6 +2,7 @@
 import rospy
 
 import tf
+import math
 from nav_msgs.msg import Odometry
 
 def odometryHandler(msg):
@@ -11,8 +12,13 @@ def odometryHandler(msg):
     br = tf.TransformBroadcaster()
     pos = msg.pose.pose.position
     ori = msg.pose.pose.orientation
-    br.sendTransform((pos.x, pos.y, pos.z),
-                     (ori.x, ori.y, ori.z, ori.w),
+    euler = tf.transformations.euler_from_quaternion((ori.x, -ori.y, -ori.z, ori.w))
+    theta = euler[2]
+    x = (-math.cos(theta)*pos.x) + (math.sin(theta)*pos.y)
+    y = (-math.sin(theta)*pos.x) + (-math.cos(theta)*pos.y)
+    br.sendTransform((x, y, pos.z),
+                     #tf.transformations.quaternion_from_euler(0, 0, math.radians(180)),
+                     (ori.x, -ori.y, -ori.z, ori.w),
                      rospy.Time.now(),
                      "map",
                      "base_link")
