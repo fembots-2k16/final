@@ -33,12 +33,41 @@ floorplan
   bitmap "bitmaps/hospital_section.png"
 )
 
-
+# hider robot
 pioneer2dx_base_no_sonar
 (
   # can refer to the robot by this name
   name "r0"
   pose [ 4.49 3.19 0 45.000 ]
+
+  # the laser will be ranger:0 (base_scan)
+  hokuyolaser( pose [ 0 0 0 0 ] )
+
+  # report error-free position in world coordinates
+  localization "gps"
+  localization_origin [ 0 0 0 0 ]
+
+  # simplified Body shape:
+  block(
+    points 8
+    point[0] [-0.2 0.12]
+    point[1] [-0.2 -0.12]
+    point[2] [-0.12 -0.2555]
+    point[3] [0.12 -0.2555]
+    point[4] [0.2 -0.12]
+    point[5] [0.2 0.12]
+    point[6] [0.12 0.2555]
+    point[7] [-0.12 0.2555]
+    z [0 0.22]
+  )
+)
+
+# finder robot
+pioneer2dx_base_no_sonar
+(
+  # can refer to the robot by this name
+  name "r1"
+  pose [ 10.0 3.19 0 0.000 ]
 
   # the laser will be ranger:0 (base_scan)
   hokuyolaser( pose [ 0 0 0 0 ] )

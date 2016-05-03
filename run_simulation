@@ -8,24 +8,28 @@ roscore &
 pid=$!
 sleep 3s
 
+echo ""
 echo "Running Stage..."
-rosrun stage_ros stageros worlds/hospital.world base_scan:=scan odom:=pose &
+rosrun stage_ros stageros worlds/hospital.world &
 pid="$pid $!"
 
 sleep 5s
 
-echo "Running fake_amcl.py... >:)"
-rosrun fembots fake_amcl.py &
+echo ""
+echo "Running fake_amcl.py for robot 0... >:)"
+rosrun fembots fake_amcl.py 0 &
 pid="$pid $!"
 
 sleep 3s
 
+echo ""
 echo "Launching master_simulation.launch..."
 roslaunch fembots master_simulation.launch &
 pid="$pid $!"
 
 sleep 5s
 
+echo ""
 echo "Starting Rviz..."
 rviz &
 pid="$pid $!"
