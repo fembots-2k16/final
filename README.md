@@ -1,3 +1,13 @@
+# to do
+- [ ] fix transform for fake amcl
+- [ ] write transform for apriltag for homework5 explanation
+- [ ] solve restarting exploration (by dummying an interrupt on simulation)
+- [ ] dummy out a finder that works with another robot
+- [ ] related work (read and summarize academically)
+- [ ] results from first iteration (get data? time to find?? distance/efficiency of hiding??)
+- [ ] finesse hiding/finding algorithm in simulation and get new results?
+- [ ] finish writing paper
+
 # simulation setup
 
 <!-- 1. Install pioneer gazebo and stuff
@@ -21,6 +31,10 @@
 --------------------------------------------------------------------------------
 
 # simulation run
+
+0. run roscore
+    
+    $ roscore
 
 1. run the stage simulation
 
