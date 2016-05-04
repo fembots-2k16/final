@@ -1,0 +1,38 @@
+DWAPlannerROS:
+  max_vel_x: 0.25
+  min_vel_x: -0.25
+  max_rotational_vel: 0.25
+  max_vel_theta: 0.25
+  min_vel_theta: -0.25
+  min_in_place_vel_theta: 0.4
+  escape_vel: -0.2
+  acc_lim_x: 2.5
+  acc_lim_y: 2.5
+  acc_lim_theta: 2.5
+
+  holonomic_robot: false
+  yaw_goal_tolerance: 0.1 # about 6 degrees
+  xy_goal_tolerance: 0.20 # 20 cm
+  latch_xy_goal_tolerance: true
+  pdist_scale: 0.8
+  gdist_scale: 1.0
+  meter_scoring: true
+  prefer_forward_cost_function: 9999.0
+
+  heading_lookahead: 1.0
+  heading_scoring: false
+  heading_scoring_timestep: 0.8
+  occdist_scale: 0.1
+  oscillation_reset_dist: 0.05
+  publish_cost_grid_pc: false
+  prune_plan: true
+
+  sim_time: 1.7
+  sim_granularity: 0.025
+  angular_sim_granularity: 0.025
+  vx_samples: 8
+  vtheta_samples: 20
+  dwa: true
+  simple_attractor: false
+
+  base_local_planner: "DWAPlannerROS"

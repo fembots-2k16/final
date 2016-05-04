@@ -1,0 +1,17 @@
+<launch>
+	<master auto="start"/>
+
+    <node pkg="map_server" type="map_server" name="map_server" args="$(find fembots)/maps/map.yaml" />
+
+    <include file="$(find fembots)/launch/amcl.launch" />
+
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+		<param name="controller_frequency" value="2.0" />
+		<rosparam file="$(find fembots)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+		<rosparam file="$(find fembots)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+		<rosparam file="$(find fembots)/config/local_costmap_params.yaml" command="load" />
+		<rosparam file="$(find fembots)/config/global_costmap_params.yaml" command="load" />
+		<rosparam file="$(find fembots)/config/base_local_planner_params.yaml" command="load" />
+	</node>
+
+</launch>

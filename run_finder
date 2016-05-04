@@ -1,0 +1,29 @@
+#!/bin/bash
+
+my_pid=$$
+echo "My process ID is $my_pid"
+
+echo "FINDER!!!!!!!!!!!"
+
+echo ""
+echo "Running fake_amcl.py for robot 1... >:D"
+rosrun fembots fake_amcl.py 1 &
+pid=$!
+
+sleep 3s
+
+echo ""
+echo "Launching master_finder_simulation.launch..."
+roslaunch fembots master_finder_simulation.launch &
+pid="$pid $!"
+
+sleep 3s
+
+echo ""
+echo "Starting Rviz..."
+rosrun rviz rviz -d ~/catkin_ws/src/fembots/config/simulation/finder.rviz &
+pid="$pid $!"
+
+trap "echo Killing all processes.; kill -2 TERM $pid; exit" SIGINT SIGTERM
+
+sleep 24h

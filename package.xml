@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>fembots</name>
+  <version>0.0.0</version>
+  <description>Our final project package</description>
+
+  <maintainer email="cakeandturtles@gmail.com">CS 560 - fembots 2k16</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <!--<build_depend>ros_control</build_depend>
+  <build_depend>ros_controllers</build_depend>
+  <run_depend>ros_control</run_depend>
+  <run_depend>ros_controllers</run_depend>-->
+
+  <run_depend>controller_manager</run_depend>
+
+  <export>
+
+  </export>
+</package>

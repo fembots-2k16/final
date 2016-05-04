@@ -1,0 +1,37 @@
+#!/bin/bash
+
+my_pid=$$
+echo "My process ID is $my_pid"
+
+echo "HIDER!!!!!!!!!!!"
+
+echo ""
+echo "Running fake_amcl.py for robot 0... >:)"
+rosrun fembots fake_amcl.py 0 &
+pid=$!
+
+sleep 3s
+
+echo ""
+echo "Launching master_hider_simulation.launch..."
+roslaunch fembots master_hider_simulation.launch &
+pid="$pid $!"
+
+sleep 3s
+
+echo ""
+echo "Starting Rviz..."
+rosrun rviz rviz -d ~/catkin_ws/src/fembots/config/simulation/hider.rviz &
+pid="$pid $!"
+
+echo "once this starts, we'll start hiding!"
+
+sleep 5s
+echo "starting hider_sim.py"
+rosrun fembots hider_sim.py
+pid="$pid $!"
+
+
+trap "echo Killing all processes.; kill -2 TERM $pid; exit" SIGINT SIGTERM
+
+sleep 24h

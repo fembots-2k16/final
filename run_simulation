@@ -1,0 +1,18 @@
+#!/bin/bash
+
+my_pid=$$
+echo "My process ID is $my_pid"
+
+echo "Running roscore"
+roscore &
+pid=$!
+sleep 3s
+
+echo ""
+echo "Running Stage..."
+rosrun stage_ros stageros worlds/hospital.world &
+pid="$pid $!"
+
+trap "echo Killing all processes.; kill -2 TERM $pid; exit" SIGINT SIGTERM
+
+sleep 24h
