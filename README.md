@@ -35,15 +35,19 @@
 
 1. run the stage simulation
 
-    $ cd ~/catkin_ws/src/fembots
+    $ roscd fembots
 
     $ ./run_simulation
 
 2. run the hider or finder nodes??
 
-    $ rosrun fembots hider_sim.py
+    $ roscd fembots
 
-    $ rosrun fembots finder_sim.py
+    $ ./run_hider
+
+        # OR 
+
+    $ ./run_finder
 
 --------------------------------------------------------------------------------
 
