@@ -5,6 +5,7 @@
 include "pioneer.inc"
 include "map.inc"
 include "hokuyo.inc"
+include "sick.inc"
 
 # time to pause (in GUI mode) or quit (in headless mode (-g)) the simulation
 quit_time 3600 # 1 hour of simulated time
@@ -38,10 +39,10 @@ pioneer2dx_base_no_sonar
 (
   # can refer to the robot by this name
   name "r0"
-  pose [ 4.49 3.19 0 45.000 ]
+  pose [ 4.49 3.19 0 90.000 ]
 
   # the laser will be ranger:0 (base_scan)
-  hokuyolaser( pose [ 0 0 0 0 ] )
+  sicklaser( pose [ 0 0 0 0 ] )
 
   # report error-free position in world coordinates
   localization "gps"
@@ -67,10 +68,11 @@ pioneer2dx_base_no_sonar
 (
   # can refer to the robot by this name
   name "r1"
-  pose [ 10.0 3.19 0 0.000 ]
+  color "green"
+  pose [ 10.0 3.19 0 90.000 ]
 
   # the laser will be ranger:0 (base_scan)
-  hokuyolaser( pose [ 0 0 0 0 ] )
+  sicklaser( pose [ 0 0 0 0 ] )
 
   # report error-free position in world coordinates
   localization "gps"
