@@ -1,0 +1,27 @@
+<launch>
+	<master auto="start"/>
+
+    <param name="/use_sim_time" value="true" />
+
+    <!-- Run the map server -->
+    <!-- running the simulation hospital map?? -->
+    <!-- can this be automated in the run_simulation script? yes. -->
+    <node pkg="map_server" type="map_server" name="map_server" args="$(find fembots)/maps/hospital.yaml">
+        <param name="frame_id" value="/map" />
+    </node>
+
+    <group ns="robot_0/">
+        <param name="tf_prefix" value="robot_0" />
+        <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    		<param name="controller_frequency" value="2.0" />
+    		<rosparam file="$(find fembots)/config/simulation/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    		<rosparam file="$(find fembots)/config/simulation/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    		<rosparam file="$(find fembots)/config/simulation/local_costmap_params.yaml" command="load" />
+    		<rosparam file="$(find fembots)/config/simulation/global_costmap_params.yaml" command="load" />
+    		<rosparam file="$(find fembots)/config/simulation/base_local_planner_params.yaml" command="load" />
+
+            <remap from="map" to="/map" />
+    	</node>
+        <include file="$(find fembots)/launch/exploration.launch"></include>
+    </group>
+</launch>

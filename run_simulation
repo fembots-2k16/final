@@ -13,34 +13,6 @@ echo "Running Stage..."
 rosrun stage_ros stageros worlds/hospital.world &
 pid="$pid $!"
 
-sleep 5s
-
-echo ""
-echo "Running fake_amcl.py for robot 0... >:)"
-rosrun fembots fake_amcl.py 0 &
-pid="$pid $!"
-
-sleep 1s
-
-#echo ""
-#echo "Running fake_amcl.py for robot 1... >:D"
-#rosrun fembots fake_amcl.py 1 &
-#pid="$pid $!"
-
-#sleep 3s
-
-echo ""
-echo "Launching master_simulation.launch..."
-roslaunch fembots master_simulation.launch &
-pid="$pid $!"
-
-sleep 5s
-
-echo ""
-echo "Starting Rviz..."
-rviz &
-pid="$pid $!"
-
 trap "echo Killing all processes.; kill -2 TERM $pid; exit" SIGINT SIGTERM
 
 sleep 24h

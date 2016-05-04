@@ -21,7 +21,7 @@
 
     $ git clone https://github.com/fembots-2k16/final
 
-    $ sudo mv -r final fembots
+    $ sudo mv final fembots
 
     $ cd ~/catkin_ws
 
