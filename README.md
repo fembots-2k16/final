@@ -6,6 +6,7 @@
 - [ ] dummy out a finder that works with another robot
 - [ ] related work (read and summarize academically)
 - [ ] results from first iteration (get data? time to find?? distance/efficiency of hiding??)
+    - [ ] can we fix frontier exploration parameters??? it's not great
 - [ ] finesse hiding/finding algorithm in simulation and get new results?
 - [ ] finish writing paper
 
@@ -45,7 +46,7 @@
 
     $ ./run_hider
 
-        # OR 
+        # OR
 
     $ ./run_finder
 

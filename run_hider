@@ -28,7 +28,7 @@ echo "once this starts, we'll start hiding!"
 
 sleep 5s
 echo "starting hider_sim.py"
-rosrun fembots hider_sim.py
+python ~/catkin_ws/src/fembots/nodes/hider_sim.py 300 wall_follow &
 pid="$pid $!"
 
 
