@@ -19,9 +19,14 @@ pid="$pid $!"
 
 sleep 3s
 
-echo ""
-echo "Starting Rviz..."
-rosrun rviz rviz -d ~/catkin_ws/src/fembots/config/simulation/finder.rviz &
+#echo ""
+#echo "Starting Rviz..."
+#rosrun rviz rviz -d ~/catkin_ws/src/fembots/config/simulation/finder.rviz &
+#pid="$pid $!"
+
+#sleep 5s
+echo "starting finder_sim.py"
+python ~/catkin_ws/src/fembots/nodes/finder_sim.py wall_follow_break &
 pid="$pid $!"
 
 trap "echo Killing all processes.; kill -2 TERM $pid; exit" SIGINT SIGTERM

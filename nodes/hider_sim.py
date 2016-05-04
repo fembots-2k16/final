@@ -32,7 +32,6 @@ EXPLORATION_TYPE = "frontier_exploration"
 
 seq_id = 0
 rate = None
-goal_client = None
 exploration_client = None
 interrupt_exploration = False
 farthest_position = [None, None]
@@ -91,11 +90,11 @@ def scanHandler(data):
 def isFrontierExploration():
     return EXPLORATION_TYPE == "frontier_exploration"
 
-def isWallFollowing():
-    return EXPLORATION_TYPE == "wall_follow"
+def isWallFollowBreaking():
+    return EXPLORATION_TYPE == "wall_follow_break"
 
 def startExploration():
-    global goal_status, exploration_client, rate, interrupt_exploration, seq_id
+    global exploration_client, rate, interrupt_exploration, seq_id
     if interrupt_exploration: return
 
     if isFrontierExploration():
@@ -116,13 +115,13 @@ def startExploration():
         exploration_client.wait_for_result()
         print "exploration goal 'complete'"
 
-    if isWallFollowing():
+    if isWallFollowBreaking():
         pass
 
 def continueExploration():
     global robot, velPub
     if isFrontierExploration(): return
-    if isWallFollowing():
+    if isWallFollowBreaking():
         twist = Twist()
         twist = robot.navigate(twist)
         velPub.publish(twist)
@@ -133,7 +132,7 @@ def stopExploration():
     if isFrontierExploration():
         exploration_client.cancel_all_goals()
 
-    if isWallFollowing():
+    if isWallFollowBreaking():
         pass
 
 def chooseHidingSpot():
@@ -162,8 +161,8 @@ def chooseHidingSpot():
 
 def setHidingTargetPose():
     global chosenHidingSpot
-    client = actionlib.SimpleActionClient("robot_0/move_base", MoveBaseAction)
-    client.wait_for_server()
+    goal_client = actionlib.SimpleActionClient("robot_0/move_base", MoveBaseAction)
+    goal_client.wait_for_server()
 
     goal = MoveBaseGoal()
     goal.target_pose.header.frame_id = "map"
@@ -177,9 +176,9 @@ def setHidingTargetPose():
         print "sending hiding goal! you'll never catch me now..."
         print "hiding at position:", chosenHidingSpot[0].position.x, chosenHidingSpot[0].position.y
         print "\tdistance from initial:", chosenHidingSpot[1]
-        client.send_goal_and_wait(goal)
+        goal_client.send_goal_and_wait(goal)
 
-        print "Result:", client.get_result()
+        print "Result:", goal_client.get_result()
 
 
 def waitForHideTime(hide_time):

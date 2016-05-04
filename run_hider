@@ -19,16 +19,16 @@ pid="$pid $!"
 
 sleep 3s
 
-echo ""
-echo "Starting Rviz..."
-rosrun rviz rviz -d ~/catkin_ws/src/fembots/config/simulation/hider.rviz &
-pid="$pid $!"
+#echo ""
+#echo "Starting Rviz..."
+#rosrun rviz rviz -d ~/catkin_ws/src/fembots/config/simulation/hider.rviz &
+#pid="$pid $!"
 
-echo "once this starts, we'll start hiding!"
+#echo "once this starts, we'll start hiding!"
 
-sleep 5s
+#sleep 5s
 echo "starting hider_sim.py"
-python ~/catkin_ws/src/fembots/nodes/hider_sim.py 300 wall_follow &
+python ~/catkin_ws/src/fembots/nodes/hider_sim.py 300 wall_follow_break &
 pid="$pid $!"
 
 

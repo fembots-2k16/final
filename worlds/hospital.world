@@ -68,7 +68,8 @@ pioneer2dx_base_no_sonar
 (
   # can refer to the robot by this name
   name "r1"
-  pose [ 10.0 3.19 0 0.000 ]
+  color "green"
+  pose [ 10.0 3.19 0 90.000 ]
 
   # the laser will be ranger:0 (base_scan)
   sicklaser( pose [ 0 0 0 0 ] )

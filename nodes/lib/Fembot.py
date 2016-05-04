@@ -11,7 +11,8 @@ class Fembot:
         self.laser = None
         self.initial_pose = None
         self.angle_sensitivity = 40
-        self.proximity_sensitivity = 0.5
+        self.proximity_sensitivity = 0.4
+        self.movement_amt = 7
         self.is_wall_searching = False
         self.is_spinning = 0
         self.is_stuck = 0
@@ -154,8 +155,8 @@ class Fembot:
         return curr_angle - desired_angle
 
 
-    def moveForward(self, dist):
-        return ["move", False, dist, self.pose.position.x, self.pose.position.y]
+    def moveForward(self, dist, amt):
+        return ["move", False, dist, amt, self.pose.position.x, self.pose.position.y]
     def properDiffDist(self, x1, y1, x2, y2):
         if self.angle == 0:
             return x1 - x2
@@ -187,25 +188,33 @@ class Fembot:
             print "STARTED?", self.is_wall_searching
 
         if command == "move":
-            x1 = self.pose.position.x
-            y1 = self.pose.position.y
+            if item[2] != 0:
+                x1 = self.pose.position.x
+                y1 = self.pose.position.y
 
-            x2 = item[3]
-            if self.angle == 0: x2 += item[2]
-            elif self.angle == 180: x2 -= item[2]
-            y2 = item[4]
-            if self.angle == 90: y2 += item[2]
-            elif self.angle == 270: y2 -= item[2]
+                x2 = item[4]
+                if self.angle == 0: x2 += item[2]
+                elif self.angle == 180: x2 -= item[2]
+                y2 = item[5]
+                if self.angle == 90: y2 += item[2]
+                elif self.angle == 270: y2 -= item[2]
 
-            diff = self.properDiffDist(x1, y1, x2, y2)
+                diff = self.properDiffDist(x1, y1, x2, y2)
 
-            #print x1, y1, x2, y2, "diff", diff
+                #print x1, y1, x2, y2, "diff", diff
 
-            twist.linear.x = 1.0
+                twist.linear.x = 1.0
 
-            if diff > 0 or (item[2] > 0 and self.hasFrontObstacle()):
-                twist.linear.x = 0
-                self.queue[0][1] = True
+                if diff > 0 or (item[2] > 0 and self.hasFrontObstacle()):
+                    twist.linear.x = 0
+                    self.queue[0][1] = True
+            else:
+                twist.linear.x = 1.0
+                item[3] -= 1
+                if item[3] <= 0:
+                    twist.linear.x = 0
+                    self.queue[0][1] = True
+
 
         if command == "turn":
             sensitivity = 0.9
@@ -288,7 +297,7 @@ class Fembot:
                         if self.is_stuck < 120:
                             self.looking_for_right = False
                 else:
-                    self.queue.append(self.moveForward(0.25))
+                    self.queue.append(self.moveForward(0, self.movement_amt))
                     self.queue.append(self.rightTurn())
                     self.queue.append(self.tryBreakWall())
                     self.looking_for_right = True
