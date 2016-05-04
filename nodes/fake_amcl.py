@@ -39,6 +39,6 @@ if __name__ == '__main__':
     if len(sys.argv) == 2:
         robot_num = int(sys.argv[1])
 
-    rospy.init_node('fake_amcl')
+    rospy.init_node('fake_amcl_'+str(robot_num))
     rospy.Subscriber('/robot_'+str(robot_num)+'/odom', Odometry, robotPoseHandler)
     rospy.spin()

@@ -82,7 +82,7 @@ def odometryHandler(data):
 # checks the laser scan values and updates the values in the dictionary
 # containing potential hidings spots
 def scanHandler(data):
-    global chosenHidingSpot, farthest_position
+    global chosenHidingSpot, farthest_position, initial_pose, robot_pose, hidingMap
     if initial_pose == None: return
 
     ranges = data.ranges
@@ -106,7 +106,6 @@ def scanHandler(data):
         levelOfHiding += 1
 
     if levelOfHiding > 0:
-        global robot_pose, hidingMap
         print "distance ", distance
         if hidingMap[levelOfHiding] != None: # if a spot was previously saved
             # check if the current spot is farther from the previously saved spot
@@ -123,7 +122,7 @@ def startExploration():
     if interrupt_exploration:
         return
 
-    exploration_client = actionlib.SimpleActionClient("explore_server", ExploreTaskAction)
+    exploration_client = actionlib.SimpleActionClient("robot_0/explore_server", ExploreTaskAction)
     print "waiting for the exploration server..."
     exploration_client.wait_for_server()
 
@@ -131,8 +130,8 @@ def startExploration():
     seq_id += 1
     exploration_goal.explore_boundary.header.seq = seq_id
     exploration_goal.explore_boundary.header.frame_id = "map"
-    exploration_goal.explore_center.point.x = 1
-    exploration_goal.explore_center.point.y = -5
+    exploration_goal.explore_center.point.x = 5
+    exploration_goal.explore_center.point.y = 5
     exploration_goal.explore_center.point.z = 0
 
     exploration_client.send_goal(exploration_goal)
@@ -166,7 +165,7 @@ def chooseHidingSpot():
 
 def setHidingTargetPose():
     global chosenHidingSpot
-    client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+    client = actionlib.SimpleActionClient("robot_0/move_base", MoveBaseAction)
     client.wait_for_server()
 
     goal = MoveBaseGoal()
@@ -206,13 +205,13 @@ def main(args):
     rospy.init_node('fembots_hider_sim')
     rate = rospy.Rate(10)
 
-    rospy.Subscriber("/pose", Odometry, odometryHandler)
+    rospy.Subscriber("/robot_0/odom", Odometry, odometryHandler)
     #rospy.Subscriber("/initialpose", PoseWithCovarianceStamped, initialPoseHandler)
-    rospy.Subscriber("/scan", LaserScan, scanHandler)
+    rospy.Subscriber("/robot_0/base_scan", LaserScan, scanHandler)
 
 
-    velPub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
-    motPub = rospy.Publisher("/cmd_motor_state", MotorState, queue_size=10)
+    velPub = rospy.Publisher("/robot_0/cmd_vel", Twist, queue_size=10)
+    motPub = rospy.Publisher("/robot_0/cmd_motor_state", MotorState, queue_size=10)
 
     motor = MotorState()
     motor.state = 1

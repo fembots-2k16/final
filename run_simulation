@@ -20,7 +20,14 @@ echo "Running fake_amcl.py for robot 0... >:)"
 rosrun fembots fake_amcl.py 0 &
 pid="$pid $!"
 
-sleep 3s
+sleep 1s
+
+#echo ""
+#echo "Running fake_amcl.py for robot 1... >:D"
+#rosrun fembots fake_amcl.py 1 &
+#pid="$pid $!"
+
+#sleep 3s
 
 echo ""
 echo "Launching master_simulation.launch..."

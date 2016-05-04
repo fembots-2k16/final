@@ -12,7 +12,6 @@
 
     <group ns="robot_0/">
         <param name="tf_prefix" value="robot_0" />
-        <node pkg="fembots" type="fake_amcl.py" name="fake_amcl" args="0"/>
         <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     		<param name="controller_frequency" value="2.0" />
     		<rosparam file="$(find fembots)/config/simulation/costmap_common_params.yaml" command="load" ns="global_costmap" />
@@ -26,10 +25,8 @@
         <include file="$(find fembots)/launch/exploration.launch"></include>
     </group>
 
-    <!--
-    <group ns="robot_1/">
+    <!-- <group ns="robot_1/">
         <param name="tf_prefix" value="robot_1" />
-        <node pkg="fembots" type="fake_amcl.py" name="fake_amcl" args="1"/>
         <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     		<param name="controller_frequency" value="2.0" />
     		<rosparam file="$(find fembots)/config/simulation/costmap_common_params.yaml" command="load" ns="global_costmap" />
@@ -42,5 +39,5 @@
     	</node>
         <include file="$(find fembots)/launch/exploration.launch"></include>
     </group>
-    -->
+-->
 </launch>
