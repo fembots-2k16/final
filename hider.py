@@ -84,8 +84,8 @@ def odometryHandler(data):
 # checks the laser scan values and updates the values in the dictionary
 # containing potential hidings spots
 def scanHandler(data):
-    global chosenHidingSpot, farthest_position
-    if initial_pose == None: return
+    global chosenHidingSpot, farthest_position, robot_pose
+    if initial_pose == None or robot_pose == None: return
 
     ranges = data.ranges
     left = ranges[len(ranges)-1]
@@ -108,8 +108,8 @@ def scanHandler(data):
         levelOfHiding += 1
 
     if levelOfHiding > 0:
-        global robot_pose, hidingMap
-        print "distance ", distance
+        global hidingMap
+        #print "distance ", distance
         if hidingMap[levelOfHiding] != None: # if a spot was previously saved
             # check if the current spot is farther from the previously saved spot
             if (distance > hidingMap[levelOfHiding][1]):
@@ -181,6 +181,8 @@ def setHidingTargetPose():
         goal.target_pose.pose.orientation.w = 1.0
 
         print "sending hiding goal! you'll never catch me now..."
+        print "hide x:", chosenHidingSpot[0].position.x
+        print "hide y:", chosenHidingSpot[0].position.y
         client.send_goal(goal)
 
         print "Result:", client.get_result()
@@ -202,7 +204,8 @@ def main(args):
     global goal_client, exploration_client, rate, status
 
     hide_time = 60 # default hide time 60 seconds
-    hide_time = 120
+    #hide_time = 30
+    #hide_time = 120
     if (len(args) > 0):
         hide_time = int(args[0])
     print 'set hide time to ' ,hide_time
