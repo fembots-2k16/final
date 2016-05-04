@@ -20,6 +20,8 @@ from frontier_exploration.msg import ExploreTaskAction, ExploreTaskGoal, Explore
 from p2os_msgs.msg import MotorState
 from random import randint
 
+HIDE_TIME = 60*5 # 5 minutes
+
 seq_id = 0
 rate = None
 goal_client = None
@@ -130,8 +132,8 @@ def startExploration():
     seq_id += 1
     exploration_goal.explore_boundary.header.seq = seq_id
     exploration_goal.explore_boundary.header.frame_id = "map"
-    exploration_goal.explore_center.point.x = 5
-    exploration_goal.explore_center.point.y = 5
+    exploration_goal.explore_center.point.x = 0
+    exploration_goal.explore_center.point.y = 0
     exploration_goal.explore_center.point.z = 0
 
     exploration_client.send_goal(exploration_goal)
@@ -196,9 +198,9 @@ def waitForHideTime(hide_time):
     setHidingTargetPose()
 
 def main(args):
-    global goal_client, exploration_client, rate
+    global goal_client, exploration_client, rate, HIDE_TIME
 
-    hide_time = 60 # default hide time 60 seconds
+    hide_time = HIDE_TIME
     if (len(args) > 0):
         hide_time = int(args[0])
     print 'set hide time to ' ,hide_time

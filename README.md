@@ -2,7 +2,7 @@
 - [x] fix transform for fake amcl
 - [x] write transform for apriltag for homework5 explanation
 - [x] solve restarting exploration (by dummying an interrupt on simulation)
-- [ ] get simulation to work with two robots...
+- [x] get simulation to work with two robots... (kind of)
 - [ ] dummy out a finder that works with another robot
 - [ ] related work (read and summarize academically)
 - [ ] results from first iteration (get data? time to find?? distance/efficiency of hiding??)

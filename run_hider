@@ -24,6 +24,14 @@ echo "Starting Rviz..."
 rosrun rviz rviz -d ~/catkin_ws/src/fembots/config/simulation/hider.rviz &
 pid="$pid $!"
 
+echo "once this starts, we'll start hiding!"
+
+sleep 5s
+echo "starting hider_sim.py"
+rosrun fembots hider_sim.py
+pid="$pid $!"
+
+
 trap "echo Killing all processes.; kill -2 TERM $pid; exit" SIGINT SIGTERM
 
 sleep 24h

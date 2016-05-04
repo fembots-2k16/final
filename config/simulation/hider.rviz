@@ -4,8 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /goal 01
-        - /Marker1
+        - /frontiers1
       Splitter Ratio: 0.5
     Tree Height: 697
   - Class: rviz/Selection
@@ -57,14 +56,6 @@ Visualization Manager:
       Topic: /map
       Unreliable: false
       Value: true
-    - Arrow Length: 0.3
-      Class: rviz/PoseArray
-      Color: 255; 25; 0
-      Enabled: false
-      Name: pcloud 0
-      Topic: /particlecloud
-      Unreliable: false
-      Value: false
     - Alpha: 1
       Class: rviz/Polygon
       Color: 255; 0; 0
@@ -186,8 +177,47 @@ Visualization Manager:
       Marker Topic: /robot_0/exploration_polygon_marker
       Name: Marker
       Namespaces:
-        explore_points: true
+        {}
       Queue Size: 100
+      Value: true
+    - Alpha: 0.7
+      Class: rviz/Map
+      Color Scheme: costmap
+      Draw Behind: false
+      Enabled: true
+      Name: exploraiton_costmap
+      Topic: /robot_0/explore_server/explore_costmap/costmap
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: Intensity
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 100
+      Min Color: 0; 0; 0
+      Min Intensity: 100
+      Name: frontiers
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.02
+      Style: Flat Squares
+      Topic: /robot_0/explore_server/explore_costmap/explore_boundary/frontiers
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
       Value: true
   Enabled: true
   Global Options:
@@ -243,5 +273,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1843
-  X: 68
+  X: 54
   Y: 17

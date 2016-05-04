@@ -22,6 +22,6 @@
 
             <remap from="map" to="/map" />
     	</node>
-        <include file="$(find fembots)/launch/exploration.launch"></include>
+        <include file="$(find fembots)/launch/exploration_simulation.launch"></include>
     </group>
 </launch>
