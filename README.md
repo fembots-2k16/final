@@ -1,18 +1,15 @@
 # to do
-- [ ] dummy out a finder that works with another robot
+- [x] dummy out a finder that works with another robot
 - [ ] related work (read and summarize academically)
-- [ ] results from first iteration (get data? time to find?? distance/efficiency of hiding??)
+- [x] results from first iteration (get data? time to find?? distance/efficiency of hiding??)
     - [ ] can we fix frontier exploration parameters??? it's not great
-- [ ] finesse hiding/finding algorithm in simulation and get new results?
+    - [ ] finish getting results!!!
+- [x] finesse hiding/finding algorithm in simulation and get new results?
 - [ ] finish writing paper
 
 # simulation setup
 
-<!-- 1. Install pioneer gazebo and stuff
-
-    http://web.engr.oregonstate.edu/~chungje/Code/Pioneer3dx%20simulation/ros-indigo-gazebo2-pioneer.pdf -->
-
-2. Install fembots-final
+0. Install fembots-final
 
     $ cd ~/catkin_ws/src
 

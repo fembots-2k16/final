@@ -1,5 +1,6 @@
 import rospy
 import math
+import random
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import LaserScan
@@ -9,6 +10,12 @@ class Fembot:
         self.pose = None
         self.prev_pose = None
         self.laser = None
+        self.obstacles = {
+            "front": False,
+            "left": False,
+            "right": False,
+            "back": False
+        }
         self.initial_pose = None
         self.angle_sensitivity = 40
         self.proximity_sensitivity = 0.4
@@ -157,6 +164,8 @@ class Fembot:
 
     def moveForward(self, dist, amt):
         return ["move", False, dist, amt, self.pose.position.x, self.pose.position.y]
+    def moveBackward(self, dist, amt):
+        return ["moveB", False, dist, amt, self.pose.position.x, self.pose.position.y]
     def properDiffDist(self, x1, y1, x2, y2):
         if self.angle == 0:
             return x1 - x2
@@ -210,6 +219,34 @@ class Fembot:
                     self.queue[0][1] = True
             else:
                 twist.linear.x = 1.0
+                item[3] -= 1
+                if item[3] <= 0:
+                    twist.linear.x = 0
+                    self.queue[0][1] = True
+
+        if command == "moveB":
+            if item[2] != 0:
+                x1 = self.pose.position.x
+                y1 = self.pose.position.y
+
+                x2 = item[4]
+                if self.angle == 0: x2 += item[2]
+                elif self.angle == 180: x2 -= item[2]
+                y2 = item[5]
+                if self.angle == 90: y2 += item[2]
+                elif self.angle == 270: y2 -= item[2]
+
+                diff = self.properDiffDist(x1, y1, x2, y2)
+
+                #print x1, y1, x2, y2, "diff", diff
+
+                twist.linear.x = -1.0
+
+                if diff > 0 or (item[2] > 0 and self.hasFrontObstacle()):
+                    twist.linear.x = 0
+                    self.queue[0][1] = True
+            else:
+                twist.linear.x = -1.0
                 item[3] -= 1
                 if item[3] <= 0:
                     twist.linear.x = 0
@@ -348,6 +385,41 @@ class Fembot:
                     self.looking_for_right = True
 
 
+
+        if len(self.queue) > 0:
+            return self.handleQueue(twist)
+        else: return twist
+
+    def navigateRandom(self, twist):
+        if self.laser == None:
+            print "waiting for laser scan..."
+            return twist
+
+        if len(self.queue) > 0:
+            return self.handleQueue(twist)
+
+        choices = ["left", "right"]
+        for i in range(20):
+            choices.append("forward")
+        if self.hasFrontObstacle():
+            while choices.count("forward") > 0:
+                choices.remove("forward")
+        if self.hasLeftObstacle():
+            choices.remove("left")
+        if self.hasRightObstacle():
+            choices.remove("right")
+
+        if len(choices) == 0:
+            self.queue.append(self.moveBackward(0, 3))
+        else:
+            choice_index = random.randint(0, len(choices)-1)
+            choice = choices[choice_index]
+            if choice == "forward":
+                self.queue.append(self.moveForward(0, 3))
+            if choice == "left":
+                self.queue.append(self.leftTurn())
+            if choice == "right":
+                self.queue.append(self.rightTurn())
 
         if len(self.queue) > 0:
             return self.handleQueue(twist)

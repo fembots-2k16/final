@@ -96,6 +96,9 @@ def isWallFollowBreaking():
 def isWallFollowing():
     return EXPLORATION_TYPE == "wall_follow"
 
+def isRandom():
+    return EXPLORATION_TYPE == "random"
+
 def startExploration():
     global exploration_client, rate, interrupt_exploration, seq_id
     if interrupt_exploration: return
@@ -123,6 +126,9 @@ def startExploration():
     if isWallFollowBreaking():
         pass
 
+    if isRandom():
+        pass
+
 def continueExploration():
     global robot, velPub
     if isFrontierExploration(): return
@@ -133,6 +139,10 @@ def continueExploration():
     if isWallFollowBreaking():
         twist = Twist()
         twist = robot.navigateWallFollowBreak(twist)
+        velPub.publish(twist)
+    if isRandom():
+        twist = Twist()
+        twist = robot.navigateRandom(twist)
         velPub.publish(twist)
 
 def stopExploration():
@@ -145,6 +155,9 @@ def stopExploration():
         pass
 
     if isWallFollowBreaking():
+        pass
+
+    if isRandom():
         pass
 
 def chooseHidingSpot():
