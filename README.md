@@ -50,7 +50,7 @@
 
     $ ps ax | grep hider_sim #or $ ps ax | grep finder_sim
 
-    # remember the ID up there ^ ^ ^
+        # remember the ID up there ^ ^ ^
 
     $ kill -s KILL ID_NUM
 
