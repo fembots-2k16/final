@@ -101,8 +101,11 @@ def isFrontierExploration():
 def isWallFollowBreaking():
     return EXPLORATION_TYPE == "wall_follow_break"
 
+def isWallFollowing():
+    return EXPLORATION_TYPE == "wall_follow"
+
 def startExploration():
-    global goal_status, exploration_client, rate, interrupt_exploration, seq_id
+    global initial_time, goal_status, exploration_client, rate, interrupt_exploration, seq_id
     if interrupt_exploration: return
 
     if isFrontierExploration():
@@ -125,6 +128,8 @@ def startExploration():
 
     if isWallFollowBreaking():
         pass
+    if isWallFollowing():
+        pass
 
     initial_time = int(round(time.time() * 1000))
 
@@ -133,7 +138,11 @@ def continueExploration():
     if isFrontierExploration(): return
     if isWallFollowBreaking():
         twist = Twist()
-        twist = robot.navigate(twist)
+        twist = robot.navigateWallFollowBreak(twist)
+        velPub.publish(twist)
+    if isWallFollowing():
+        twist = Twist()
+        twist = robot.navigateWallFollow(twist)
         velPub.publish(twist)
 
 def stopExploration():
@@ -143,6 +152,8 @@ def stopExploration():
         exploration_client.cancel_all_goals()
 
     if isWallFollowBreaking():
+        pass
+    if isWallFollowing():
         pass
 
 def main(args):

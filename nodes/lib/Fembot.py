@@ -261,8 +261,53 @@ class Fembot:
         self.printQueue()
         return twist
 
+    def navigateWallFollow(self, twist):
+        if self.laser == None:
+            print "waiting for laser scan..."
+            return twist
+        #print self.pose.orientation.z
+        #return twist
+        if len(self.queue) > 0:
+            return self.handleQueue(twist)
 
-    def navigate(self, twist):
+        if not self.is_wall_searching:
+            if not self.hasFrontObstacle():
+                twist.linear.x = 0.5
+            else:
+                self.queue.append(self.leftTurn())
+                self.queue.append(self.tryStartWall())
+
+        #WALL SEARCHING
+        else:
+            if self.hasRightObstacle():
+                self.looking_for_right = False
+                if not self.hasFrontObstacle():
+                    twist.linear.x = 1.0
+                else:
+                    print "QUEUE LEFT TURN"
+                    self.queue.append(self.leftTurn())
+            else:
+                if self.looking_for_right:
+                    if not self.hasFrontObstacle():
+                        twist.linear.x = 1.0
+                    else:
+                        print "QUEUE LEFT TURN"
+                        self.queue.append(self.leftTurn())
+                        if self.is_stuck < 120:
+                            self.looking_for_right = False
+                else:
+                    self.queue.append(self.moveForward(0, self.movement_amt))
+                    self.queue.append(self.rightTurn())
+                    #self.queue.append(self.tryBreakWall())
+                    self.looking_for_right = True
+
+
+
+        if len(self.queue) > 0:
+            return self.handleQueue(twist)
+        else: return twist
+
+    def navigateWallFollowBreak(self, twist):
         if self.laser == None:
             print "waiting for laser scan..."
             return twist
