@@ -45,6 +45,14 @@
         # OR
 
     $ ./run_finder
+    
+3. you might need to kill the hider_sim.py or finder_sim.py???
+
+    $ ps ax | grep hider_sim #or $ ps ax | grep finder_sim
+
+    # remember the ID up there ^ ^ ^
+
+    $ kill -s KILL ID_NUM
 
 --------------------------------------------------------------------------------
 
