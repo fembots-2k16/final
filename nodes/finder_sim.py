@@ -102,7 +102,7 @@ def isWallFollowBreaking():
     return EXPLORATION_TYPE == "wall_follow_break"
 
 def startExploration():
-    global goal_status, exploration_client, rate, interrupt_exploration, seq_id
+    global initial_time, goal_status, exploration_client, rate, interrupt_exploration, seq_id
     if interrupt_exploration: return
 
     if isFrontierExploration():
